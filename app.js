@@ -21,13 +21,77 @@ const gameBoard = (() => {
   let players = [playerOne, playerTwo];
 
   let turn = 0;
+  let gameOver = false;
 
   // Updates the cell at the given index with the given input
   const update = function (index) {
-    if (!board[index]) {
+    if (!board[index] && !gameOver) {
       board[index] = players[turn % 2].getSymbol();
+      console.log(checkWin());
       turn += 1;
     }
+  };
+
+  const checkWin = function () {
+    let topRow =
+      board[0] &&
+      board[1] &&
+      board[2] &&
+      board[0] === board[1] &&
+      board[1] === board[2];
+    let middleRow =
+      board[3] &&
+      board[4] &&
+      board[5] &&
+      board[3] === board[4] &&
+      board[4] === board[5];
+    let bottomRow =
+      board[6] &&
+      board[7] &&
+      board[8] &&
+      board[6] === board[7] &&
+      board[7] === board[8];
+    let leftCol =
+      board[0] &&
+      board[3] &&
+      board[6] &&
+      board[0] === board[3] &&
+      board[3] === board[6];
+    let middleCol =
+      board[1] &&
+      board[4] &&
+      board[7] &&
+      board[1] === board[4] &&
+      board[4] === board[7];
+    let rightCol =
+      board[2] &&
+      board[5] &&
+      board[8] &&
+      board[2] === board[5] &&
+      board[5] === board[8];
+    let leftDiag =
+      board[0] &&
+      board[4] &&
+      board[8] &&
+      board[0] === board[4] &&
+      board[4] === board[8];
+    let rightDiag =
+      board[2] &&
+      board[4] &&
+      board[6] &&
+      board[2] === board[4] &&
+      board[4] === board[6];
+
+    return (
+      topRow ||
+      middleRow ||
+      bottomRow ||
+      leftCol ||
+      middleCol ||
+      rightCol ||
+      leftDiag ||
+      rightDiag
+    );
   };
 
   return {
