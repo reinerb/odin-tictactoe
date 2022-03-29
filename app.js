@@ -104,23 +104,18 @@ const gameBoard = (() => {
 
 // Functions for displaying the game
 const displayController = (() => {
+  const grid = document.querySelector(".game-grid");
+
   // Clears the display
   const clear = function () {
-    while (mainElement.firstChild) {
-      mainElement.removeChild(mainElement.firstChild);
+    while (grid.firstChild) {
+      grid.removeChild(grid.firstChild);
     }
   };
 
   // Displays the game
   const display = function () {
     displayController.clear();
-
-    const grid = document.createElement("div");
-    grid.classList.add("game-grid");
-
-    const handleClick = function () {
-      console.log("this");
-    };
 
     // Add a div for each cell on the grid
     for (let i = 0; i < gameBoard.board.length; i++) {
@@ -135,8 +130,6 @@ const displayController = (() => {
 
       grid.appendChild(cell);
     }
-
-    mainElement.appendChild(grid);
   };
 
   return {
