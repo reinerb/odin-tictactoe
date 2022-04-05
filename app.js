@@ -13,6 +13,9 @@ const Player = (name, symbol) => {
   // Increment the player's score by one
   const incrementScore = () => score++;
 
+  // Updates this player's symbol
+  const setSymbol = (s) => (symbol = s);
+
   // Creates a text display for player info
   const display = function (parentDiv) {
     let playerDiv = document.createElement("div");
@@ -27,6 +30,7 @@ const Player = (name, symbol) => {
   return {
     getName,
     getSymbol,
+    setSymbol,
     getScore,
     incrementScore,
     display,
@@ -46,6 +50,13 @@ const gameBoard = (() => {
 
   let turn = 0;
   let gameOver = false;
+
+  // Swaps the symbols of the players
+  const swapPlayerSymbols = function () {
+    let playerOneSymbol = players[0].getSymbol();
+    players[0].setSymbol(players[1].getSymbol());
+    players[1].setSymbol(playerOneSymbol);
+  };
 
   // Updates the cell at the given index with the active player's input
   const update = function (index) {
@@ -122,7 +133,7 @@ const gameBoard = (() => {
   return {
     board,
     players,
-    turn,
+    swapPlayerSymbols,
     update,
   };
 })();
@@ -163,11 +174,11 @@ const displayController = (() => {
 
   // Displays the game
   const display = function () {
-    clear(displayController.grid);
-    displayGrid(displayController.grid);
+    clear(grid);
+    displayGrid(grid);
 
-    clear(displayController.scoreboard);
-    displayScoreboard(displayController.scoreboard);
+    clear(scoreboard);
+    displayScoreboard(scoreboard);
   };
 
   const initialize = function () {
@@ -175,8 +186,6 @@ const displayController = (() => {
   };
 
   return {
-    grid,
-    scoreboard,
     initialize,
     display,
   };
