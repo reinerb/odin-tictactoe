@@ -81,7 +81,7 @@ const gameBoard = (() => {
 
   // Updates the cell at the given index with the active player's input
   const update = function (index) {
-    // Don't try to
+    // Only take actions if the board at the given index is empty
     if (!board[index] && !gameOver) {
       board[index] = players[turn % 2].getSymbol();
 
@@ -103,10 +103,22 @@ const gameBoard = (() => {
     }
   };
 
+  // Resets the game state to the initial state
   const resetGame = function () {
     board = [false, false, false, false, false, false, false, false, false];
     gameOver = false;
     turn = 0;
+  };
+
+  // Wins the game for the given player
+  const win = function (playerIndex) {
+    players[playerIndex].incrementScore();
+    displayController.showResult(`${players[playerIndex].getName()} wins!`);
+  };
+
+  // Calls the game a draw
+  const draw = function () {
+    displayController.showResult("It's a draw!");
   };
 
   // Logic to check if a player has won
@@ -190,6 +202,7 @@ const displayController = (() => {
   const gameStatus = document.querySelector(".game-win");
   const gameWinner = gameStatus.querySelector(".game-winner");
   const nextGameButton = gameStatus.querySelector(".next-game");
+  nextGameButton.setAttribute("onclick", "displayController.resetGame()");
 
   // Clears the display
   const clear = function (div) {
@@ -212,15 +225,23 @@ const displayController = (() => {
     display();
   };
 
+  // Displays the results of the game when a player has won
+  const showResult = function (result) {
+    gameWinner.textContent = result;
+    gameStatus.classList.remove("hidden");
+  };
+
+  // Resets the game
   const resetGame = function () {
     gameBoard.resetGame();
-    display();
+    initialize();
   };
 
   return {
     initialize,
     display,
     resetGame,
+    showResult,
   };
 })();
 
