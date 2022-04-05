@@ -51,7 +51,7 @@ const gameBoard = (() => {
   let gameOver = false;
 
   // Display the game grid
-  const display = function (parentDiv) {
+  const displayBoard = function (parentDiv) {
     for (let i = 0; i < board.length; i++) {
       const cell = document.createElement("div");
       cell.classList.add("game-cell");
@@ -62,6 +62,13 @@ const gameBoard = (() => {
         displayController.display();
       });
       parentDiv.appendChild(cell);
+    }
+  };
+
+  // Display the players
+  const displayPlayers = function (parentDiv) {
+    for (let i = 0; i < players.length; i++) {
+      players[i].display(parentDiv);
     }
   };
 
@@ -162,7 +169,8 @@ const gameBoard = (() => {
   return {
     board,
     players,
-    display,
+    displayBoard,
+    displayPlayers,
     swapPlayerSymbols,
     update,
   };
@@ -183,19 +191,13 @@ const displayController = (() => {
     }
   };
 
-  const displayScoreboard = function (div) {
-    for (let i = 0; i < gameBoard.players.length; i++) {
-      gameBoard.players[i].display(div);
-    }
-  };
-
   // Displays the game
   const display = function () {
     clear(grid);
-    gameBoard.display(grid);
+    gameBoard.displayBoard(grid);
 
     clear(scoreboard);
-    displayScoreboard(scoreboard);
+    gameBoard.displayPlayers(scoreboard);
   };
 
   const initialize = function () {
