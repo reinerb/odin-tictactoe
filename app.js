@@ -50,6 +50,21 @@ const gameBoard = (() => {
   let turn = 0;
   let gameOver = false;
 
+  // Display the game grid
+  const display = function (parentDiv) {
+    for (let i = 0; i < board.length; i++) {
+      const cell = document.createElement("div");
+      cell.classList.add("game-cell");
+      cell.textContent = board[i] ? board[i] : "";
+      cell.setAttribute("data-index", i);
+      cell.addEventListener("click", (e) => {
+        gameBoard.update(e.target.getAttribute("data-index"));
+        displayController.display();
+      });
+      parentDiv.appendChild(cell);
+    }
+  };
+
   // Swaps the symbols of the players
   const swapPlayerSymbols = function () {
     let playerOneSymbol = players[0].getSymbol();
@@ -147,6 +162,7 @@ const gameBoard = (() => {
   return {
     board,
     players,
+    display,
     swapPlayerSymbols,
     update,
   };
@@ -167,21 +183,6 @@ const displayController = (() => {
     }
   };
 
-  const displayGrid = function (div) {
-    for (let i = 0; i < gameBoard.board.length; i++) {
-      const cell = document.createElement("div");
-      cell.classList.add("game-cell");
-      cell.textContent = gameBoard.board[i] ? gameBoard.board[i] : "";
-      cell.setAttribute("data-index", i);
-      cell.addEventListener("click", (e) => {
-        gameBoard.update(e.target.getAttribute("data-index"));
-        displayController.display();
-      });
-
-      div.appendChild(cell);
-    }
-  };
-
   const displayScoreboard = function (div) {
     for (let i = 0; i < gameBoard.players.length; i++) {
       gameBoard.players[i].display(div);
@@ -191,7 +192,7 @@ const displayController = (() => {
   // Displays the game
   const display = function () {
     clear(grid);
-    displayGrid(grid);
+    gameBoard.display(grid);
 
     clear(scoreboard);
     displayScoreboard(scoreboard);
