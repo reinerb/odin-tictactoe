@@ -1,11 +1,35 @@
 const mainElement = document.querySelector("main");
 
 // Player object
-const Player = (symbol) => {
+const Player = (name, symbol) => {
+  // All players start with a score of 0
+  let score = 0;
+
+  // Retrieve player details
+  const getName = () => name;
   const getSymbol = () => symbol;
+  const getScore = () => score;
+
+  // Increment the player's score by one
+  const incrementScore = () => score++;
+
+  // Creates a text display for player info
+  const display = function (parentDiv) {
+    let playerDiv = document.createElement("div");
+    playerDiv.classList.add("player");
+
+    playerDiv.innerHTML = `<h2>${name} (${symbol})</h2><h3>${score}</h3>`;
+
+    parentDiv.appendChild(playerDiv);
+    0;
+  };
 
   return {
+    getName,
     getSymbol,
+    getScore,
+    incrementScore,
+    display,
   };
 };
 
@@ -16,22 +40,23 @@ const gameBoard = (() => {
   let board = [false, false, false, false, false, false, false, false, false];
 
   // Declare our two players
-  let playerOne = Player("X");
-  let playerTwo = Player("O");
+  let playerOne = Player("Player One", "X");
+  let playerTwo = Player("Player Two", "O");
   let players = [playerOne, playerTwo];
 
   let turn = 0;
   let gameOver = false;
 
-  // Updates the cell at the given index with the given input
+  // Updates the cell at the given index with the active player's input
   const update = function (index) {
     if (!board[index] && !gameOver) {
       board[index] = players[turn % 2].getSymbol();
-      console.log(checkWin());
+      gameOver = checkWin();
       turn += 1;
     }
   };
 
+  // Logic to check if a player has won
   const checkWin = function () {
     let topRow =
       board[0] &&
@@ -104,20 +129,18 @@ const gameBoard = (() => {
 
 // Functions for displaying the game
 const displayController = (() => {
+  const scoreboard = document.querySelector(".scoreboard");
   const grid = document.querySelector(".game-grid");
+  const resetButton = document.querySelector(".reset-button");
 
   // Clears the display
-  const clear = function () {
-    while (grid.firstChild) {
-      grid.removeChild(grid.firstChild);
+  const clear = function (div) {
+    while (div.firstChild) {
+      div.removeChild(div.firstChild);
     }
   };
 
-  // Displays the game
-  const display = function () {
-    displayController.clear();
-
-    // Add a div for each cell on the grid
+  const displayGrid = function (div) {
     for (let i = 0; i < gameBoard.board.length; i++) {
       const cell = document.createElement("div");
       cell.classList.add("game-cell");
@@ -128,14 +151,35 @@ const displayController = (() => {
         displayController.display();
       });
 
-      grid.appendChild(cell);
+      div.appendChild(cell);
     }
   };
 
+  const displayScoreboard = function (div) {
+    for (let i = 0; i < gameBoard.players.length; i++) {
+      gameBoard.players[i].display(div);
+    }
+  };
+
+  // Displays the game
+  const display = function () {
+    clear(displayController.grid);
+    displayGrid(displayController.grid);
+
+    clear(displayController.scoreboard);
+    displayScoreboard(displayController.scoreboard);
+  };
+
+  const initialize = function () {
+    display();
+  };
+
   return {
+    grid,
+    scoreboard,
+    initialize,
     display,
-    clear,
   };
 })();
 
-displayController.display();
+displayController.initialize();

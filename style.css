@@ -19,7 +19,37 @@ html {
 body {
   min-height: 100vh;
   display: grid;
+  grid-template-columns: 1fr 3fr;
   place-items: center;
+}
+
+header {
+  width: 100%;
+  height: 100%;
+  background-color: #dddddd;
+  display: grid;
+  place-items: center;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .game-grid {
@@ -39,4 +69,16 @@ body {
   border: var(--border);
   display: grid;
   place-items: center;
+}
+
+.reset-button {
+  cursor: pointer;
+  padding: 0.5em 1em;
+  background-color: transparent;
+  border: 2px solid black;
+}
+
+.reset-button:hover {
+  background-color: black;
+  color: white;
 }
