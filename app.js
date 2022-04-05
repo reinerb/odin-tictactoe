@@ -103,6 +103,12 @@ const gameBoard = (() => {
     }
   };
 
+  const resetGame = function () {
+    board = [false, false, false, false, false, false, false, false, false];
+    gameOver = false;
+    turn = 0;
+  };
+
   // Logic to check if a player has won
   const checkWin = function () {
     let topRow =
@@ -172,6 +178,7 @@ const gameBoard = (() => {
     displayBoard,
     displayPlayers,
     swapPlayerSymbols,
+    resetGame,
     update,
   };
 })();
@@ -205,9 +212,15 @@ const displayController = (() => {
     display();
   };
 
+  const resetGame = function () {
+    gameBoard.resetGame();
+    display();
+  };
+
   return {
     initialize,
     display,
+    resetGame,
   };
 })();
 
