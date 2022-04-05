@@ -1,5 +1,3 @@
-const mainElement = document.querySelector("main");
-
 // Player object
 const Player = (name, symbol) => {
   // All players start with a score of 0
@@ -16,7 +14,7 @@ const Player = (name, symbol) => {
   // Updates this player's symbol
   const setSymbol = (s) => (symbol = s);
 
-  // Creates a text display for player info
+  // Creates a text display for player info in the given div
   const display = function (parentDiv) {
     let playerDiv = document.createElement("div");
     playerDiv.classList.add("player");
@@ -48,6 +46,7 @@ const gameBoard = (() => {
   let playerTwo = Player("Player Two", "O");
   let players = [playerOne, playerTwo];
 
+  // Turns are zero-indexed to make use of the modulo operator
   let turn = 0;
   let gameOver = false;
 
@@ -60,10 +59,25 @@ const gameBoard = (() => {
 
   // Updates the cell at the given index with the active player's input
   const update = function (index) {
+    // Don't try to
     if (!board[index] && !gameOver) {
       board[index] = players[turn % 2].getSymbol();
-      gameOver = checkWin();
-      turn += 1;
+
+      // If there is a winner, end the game
+      if (checkWin()) {
+        gameOver = true;
+        win(turn % 2);
+        return;
+      }
+
+      // If it's the 9th turn and there is no winner,
+      if (turn === 8) {
+        gameOver = true;
+        draw();
+        return;
+      }
+
+      turn++;
     }
   };
 
@@ -142,7 +156,9 @@ const gameBoard = (() => {
 const displayController = (() => {
   const scoreboard = document.querySelector(".scoreboard");
   const grid = document.querySelector(".game-grid");
-  const resetButton = document.querySelector(".reset-button");
+  const gameStatus = document.querySelector(".game-win");
+  const gameWinner = gameStatus.querySelector(".game-winner");
+  const nextGameButton = gameStatus.querySelector(".next-game");
 
   // Clears the display
   const clear = function (div) {
@@ -182,6 +198,7 @@ const displayController = (() => {
   };
 
   const initialize = function () {
+    gameStatus.classList.add("hidden");
     display();
   };
 
