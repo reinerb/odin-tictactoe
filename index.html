@@ -16,6 +16,12 @@
 </head>
 
 <body>
+  <dialog id="player-info">
+    <h2>Enter Player Names</h2>
+    <input type="text" name="player-one" id="player-one" placeholder="Player One">
+    <input type="text" name="player-two" id="player-two" placeholder="Player Two">
+    <button class="btn" id="player-names-submit">Submit</button>
+  </dialog>
   <header>
     <div class="scoreboard">
     </div>
@@ -23,11 +29,15 @@
       <h2 class="game-winner"></h2>
       <button class="btn next-game">Next Game</button>
     </div>
+    <button class="btn new-game">
+      New Game
+    </button>
   </header>
   <main>
     <h1>Tic-Tac-Toe</h1>
     <div class="game-grid"></div>
   </main>
+
 </body>
 
 </html>

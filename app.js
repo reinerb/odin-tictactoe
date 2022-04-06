@@ -11,8 +11,14 @@ const Player = (name, symbol) => {
   // Increment the player's score by one
   const incrementScore = () => score++;
 
+  // Updates this player's name
+  const setName = (n) => (name = n);
+
   // Updates this player's symbol
   const setSymbol = (s) => (symbol = s);
+
+  // Resets score to 0
+  const resetScore = () => (score = 0);
 
   // Creates a text display for player info in the given div
   const display = function (parentDiv) {
@@ -27,10 +33,12 @@ const Player = (name, symbol) => {
 
   return {
     getName,
+    setName,
     getSymbol,
     setSymbol,
     getScore,
     incrementScore,
+    resetScore,
     display,
   };
 };
@@ -42,12 +50,13 @@ const gameBoard = (() => {
   let board = [false, false, false, false, false, false, false, false, false];
 
   // Declare our two players
-  let playerOne = Player("Player One", "X");
-  let playerTwo = Player("Player Two", "O");
+  let playerOne = Player("", "X");
+  let playerTwo = Player("", "O");
   let players = [playerOne, playerTwo];
 
   // Turns are zero-indexed to make use of the modulo operator
   let turn = 0;
+  let activePlayer = 0;
   let gameOver = false;
 
   // Display the game grid
@@ -72,6 +81,12 @@ const gameBoard = (() => {
     }
   };
 
+  // Sets the name of the player at the given index
+  const setPlayerName = function (index, name) {
+    newName = name === "" ? `Player ${index + 1}` : name;
+    players[index].setName(newName);
+  };
+
   // Swaps the symbols of the players
   const swapPlayerSymbols = function () {
     let playerOneSymbol = players[0].getSymbol();
@@ -83,12 +98,12 @@ const gameBoard = (() => {
   const update = function (index) {
     // Only take actions if the board at the given index is empty
     if (!board[index] && !gameOver) {
-      board[index] = players[turn % 2].getSymbol();
+      board[index] = players[activePlayer].getSymbol();
 
       // If there is a winner, end the game
       if (checkWin()) {
         gameOver = true;
-        win(turn % 2);
+        win(activePlayer);
         return;
       }
 
@@ -98,7 +113,7 @@ const gameBoard = (() => {
         draw();
         return;
       }
-
+      activePlayer = (activePlayer + 1) % 2;
       turn++;
     }
   };
@@ -110,15 +125,29 @@ const gameBoard = (() => {
     turn = 0;
   };
 
+  const fullReset = function () {
+    resetGame();
+    activePlayer = 0;
+    for (let i = 0; i < players.length; i++) {
+      players[i].resetScore();
+    }
+  };
+
   // Wins the game for the given player
   const win = function (playerIndex) {
     players[playerIndex].incrementScore();
     displayController.showResult(`${players[playerIndex].getName()} wins!`);
+    if (players[playerIndex].getSymbol() === "X") {
+      swapPlayerSymbols();
+    }
+    activePlayer = (activePlayer + 1) % 2;
   };
 
   // Calls the game a draw
   const draw = function () {
     displayController.showResult("It's a draw!");
+    swapPlayerSymbols();
+    activePlayer = (activePlayer + 1) % 2;
   };
 
   // Logic to check if a player has won
@@ -187,22 +216,43 @@ const gameBoard = (() => {
   return {
     board,
     players,
+    gameOver,
+    turn,
     displayBoard,
     displayPlayers,
     swapPlayerSymbols,
+    setPlayerName,
     resetGame,
+    fullReset,
     update,
   };
 })();
 
 // Functions for displaying the game
 const displayController = (() => {
-  const scoreboard = document.querySelector(".scoreboard");
+  // Main area elements
   const grid = document.querySelector(".game-grid");
+
+  // Sidebar elements
+  const scoreboard = document.querySelector(".scoreboard");
   const gameStatus = document.querySelector(".game-win");
   const gameWinner = gameStatus.querySelector(".game-winner");
   const nextGameButton = gameStatus.querySelector(".next-game");
   nextGameButton.setAttribute("onclick", "displayController.resetGame()");
+  const newGameButton = document.querySelector(".new-game");
+  newGameButton.setAttribute("onclick", "displayController.initialize()");
+
+  // Dialog elements
+  const playerNamesInput = document.querySelector("#player-info");
+  const playerOneName = playerNamesInput.querySelector("#player-one");
+  const playerTwoName = playerNamesInput.querySelector("#player-two");
+  const playerNamesSubmit = playerNamesInput.querySelector(
+    "#player-names-submit"
+  );
+  playerNamesSubmit.setAttribute(
+    "onclick",
+    "displayController.playerNamesFromForm()"
+  );
 
   // Clears the display
   const clear = function (div) {
@@ -222,7 +272,18 @@ const displayController = (() => {
 
   const initialize = function () {
     gameStatus.classList.add("hidden");
+    playerNamesInput.classList.remove("hidden");
+    playerNamesInput.showModal();
+    gameBoard.fullReset();
     display();
+  };
+
+  const playerNamesFromForm = function () {
+    gameBoard.setPlayerName(0, playerOneName.value);
+    gameBoard.setPlayerName(1, playerTwoName.value);
+    display();
+    playerNamesInput.close();
+    playerNamesInput.classList.add("hidden");
   };
 
   // Displays the results of the game when a player has won
@@ -234,7 +295,8 @@ const displayController = (() => {
   // Resets the game
   const resetGame = function () {
     gameBoard.resetGame();
-    initialize();
+    gameStatus.classList.add("hidden");
+    display();
   };
 
   return {
@@ -242,6 +304,7 @@ const displayController = (() => {
     display,
     resetGame,
     showResult,
+    playerNamesFromForm,
   };
 })();
 
