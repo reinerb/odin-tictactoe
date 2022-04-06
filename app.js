@@ -21,9 +21,12 @@ const Player = (name, symbol) => {
   const resetScore = () => (score = 0);
 
   // Creates a text display for player info in the given div
-  const display = function (parentDiv) {
+  const display = function (parentDiv, isActive) {
     let playerDiv = document.createElement("div");
     playerDiv.classList.add("player");
+    if (isActive) {
+      playerDiv.classList.add("active");
+    }
 
     playerDiv.innerHTML = `<h2>${name} (${symbol})</h2><h3>${score}</h3>`;
 
@@ -77,7 +80,7 @@ const gameBoard = (() => {
   // Display the players
   const displayPlayers = function (parentDiv) {
     for (let i = 0; i < players.length; i++) {
-      players[i].display(parentDiv);
+      players[i].display(parentDiv, i === activePlayer);
     }
   };
 
@@ -107,7 +110,7 @@ const gameBoard = (() => {
         return;
       }
 
-      // If it's the 9th turn and there is no winner,
+      // If it's the 9th turn and there is no winner, it's a draw
       if (turn === 8) {
         gameOver = true;
         draw();

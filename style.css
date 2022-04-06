@@ -71,6 +71,10 @@ header {
   gap: 0.5rem;
 }
 
+.active :first-child {
+  color: red;
+}
+
 .game-win {
   display: flex;
   flex-direction: column;
